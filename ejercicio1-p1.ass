@@ -1,0 +1,20 @@
+;Ejercicio "Contar Letras"
+
+ORG 1000H      
+MSJ     DB "hola, buenas tardes"
+FIN     DB ?
+CANT    DB ?
+
+ORG 2000H      
+        MOV BX, OFFSET MSJ
+        MOV AL, OFFSET FIN - OFFSET MSJ
+        MOV CL, 0
+LOOP:   CMP BYTE PTR [BX], 'a'
+        JNZ SEGUIR
+        INC CL
+SEGUIR: INC BX
+        DEC AL
+        JNZ LOOP
+        MOV CANT, CL
+        HLT
+        END
