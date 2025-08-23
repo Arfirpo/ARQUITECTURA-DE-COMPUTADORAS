@@ -1,0 +1,23 @@
+; Ejercicio 4 - Convertir string a minuscula
+                ORG 1000H
+MENSAJE         DB "Hola, BuenAS tardes"
+FIN             DB ?
+
+                ORG 2000H
+                MOV BX, OFFSET MENSAJE
+                MOV CL, OFFSET FIN - OFFSET MENSAJE
+                MOV AH, 41H
+                MOV AL, 5AH
+
+SIGO:           MOV CH, [BX]
+                CMP CH, AH
+                JS NO_ES_MAYUS
+                CMP CH,AL
+                JNS NO_ES_MAYUS
+                ADD BYTE PTR [BX], 20H
+
+NO_ES_MAYUS:    INC BX
+                DEC CL
+                JNZ SIGO
+                HLT
+END
