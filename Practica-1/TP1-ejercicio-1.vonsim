@@ -1,11 +1,11 @@
-;Ejercicio "Contar Letras"
+;Ejercicio 1 - Contar Letras
 
-ORG 1000H      
+        ORG 1000H      
 MSJ     DB "hola, buenas tardes"
 FIN     DB ?
 CANT    DB ?
 
-ORG 2000H      
+        ORG 2000H      
         MOV BX, OFFSET MSJ
         MOV AL, OFFSET FIN - OFFSET MSJ
         MOV CL, 0

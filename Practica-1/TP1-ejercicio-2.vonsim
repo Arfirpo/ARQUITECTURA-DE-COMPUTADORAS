@@ -1,16 +1,19 @@
-ORG 1000H
-              C     DB 'A'
-              RES   DB ?
+;Ejercicio 2 - Es Mayuscula
+                ORG 1000H
+C               DB 'A'
+RES             DB ?
 
-ORG 2000H
-              MOV AL, C
-              CMP AL, 'A'          ; Compara AL con 'A'
-              JC NO_ES_MAYUS        ; Salta si AL es menor que 'A'
-              CMP AL, 'Z'          ; Compara AL con 'Z'
-              JC ES_MAYUS           ; Si AL es menor que 'Z', salta a ES_MAYUS
-NO_ES_MAYUS:  MOV RES, 0            ; Si AL no está entre 'A' y 'Z', guarda 0 en RES
-              JMP FIN
-ES_MAYUS:     MOV RES, 0FFH         ; Si AL es una letra mayúscula, guarda 0FFH en RES
-FIN:          HLT                  ; Detiene la ejecución del programa
-              END
+                ORG 2000H
+                MOV AH, 41H             ;"A" EN ASCII
+                MOV AL, 5AH             ;"Z" EN ASCII
+                CMP C, AH
+                JS NO_ES_MAYUS          ;Si cmp prende el flag de signo, LA LETRA ES MENOR QUE "A"
+                CMP C, AL
+                JNS NO_ES_MAYUS
+                MOV RES, 0FFH
+                JMP FIN
+
+NO_ES_MAYUS:    MOV RES, 0
+FIN:            HLT
+END
 

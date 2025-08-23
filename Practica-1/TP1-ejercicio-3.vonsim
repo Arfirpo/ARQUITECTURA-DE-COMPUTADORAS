@@ -1,0 +1,10 @@
+;Ejercicio 3 - Convertir caracter a minuscula
+                ORG 1000H
+C               DB "A"
+
+                ORG 2000H
+                MOV AL, C
+                ADD AL, 20H
+                MOV C, AL
+                HLT
+END
