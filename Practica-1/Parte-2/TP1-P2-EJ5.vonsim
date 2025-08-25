@@ -45,17 +45,17 @@ COMP:           MOV BX, OFFSET CLAVE
 ERROR:		INC ERRORES
 		CMP ERRORES, 5
 		JZ ECHAR
-                MOV BX, OFFSET LF       ; ← Agregar line feed
+                MOV BX, OFFSET LF       
                 MOV AL, 1
                 INT 7
 		MOV BX, OFFSET MSJ3
 		MOV AL, OFFSET MSJ4 - OFFSET MSJ3
 		INT 7
-                MOV BX, OFFSET LF       ; ← Agregar line feed
+                MOV BX, OFFSET LF       
                 MOV AL, 1
                 INT 7
 		JMP INICIO
-ECHAR:          MOV BX, OFFSET LF       ; ← Agregar line feed
+ECHAR:          MOV BX, OFFSET LF       
                 MOV AL, 1
                 INT 7
                 MOV BX, OFFSET MSJ4
