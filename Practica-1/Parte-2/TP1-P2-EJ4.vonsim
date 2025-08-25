@@ -1,0 +1,47 @@
+;Ejercicio 4A - Mostrar Caracteres Individuales
+
+		ORG 1000H
+c		DB 41H
+
+		ORG 2000H
+		MOV BX, OFFSET c
+		MOV AL, 1
+SIGO:		INT 7
+		CMP C, 5AH
+		JZ FIN
+		INC BYTE PTR [BX]
+		JMP SIGO
+FIN:		HLT
+END
+;--------------------------------------------------------
+; Ejercicio 4-b2
+		ORG 1000H
+LETRA 		DB 32			;primer codigo imprimible
+		ORG 2000H
+		MOV BX, OFFSET LETRA
+		MOV AL, 1
+MOSTRAR: 	INT 7
+		CMP LETRA, 126 		; ultimo codigo imprimible
+		JZ FIN
+		INC LETRA
+		JMP MOSTRAR
+FIN: 		HLT
+END
+;--------------------------------------------------------
+; Ejercicio 4-c
+		ORG 1000H
+NUM   		DB "0"			
+ENTER		DB 10
+
+		ORG 2000H
+		MOV AL, 1
+MOSTRAR: 	MOV BX, OFFSET NUM
+		INT 7
+		MOV BX, OFFSET ENTER
+		INT 7
+		CMP NUM, 39H		; ultimo codigo imprimible
+		JZ FIN
+		INC NUM
+		JMP MOSTRAR
+FIN: 		HLT
+END

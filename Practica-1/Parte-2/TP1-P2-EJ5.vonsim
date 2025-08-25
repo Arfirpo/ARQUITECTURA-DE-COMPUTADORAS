@@ -1,0 +1,68 @@
+;Ejercicio 5 - Acceso con Contraseña
+		ORG 1000H
+MSJ		DB "INGRESE SU CONTRASEÑA: "
+MSJ2		DB "ACCESO PERMITIDO"
+MSJ3		DB "ACCESO DENEGADO"
+MSJ4		DB "ACCESO BLOQUEADO"
+ERRORES		DB 0
+AST		DB 2AH
+LF              DB 0AH
+CLAVE		DB "pass"
+CLAVE_ING	DB ?
+
+		ORG 2000H
+INICIO:		MOV BX, OFFSET MSJ
+		MOV AL, OFFSET MSJ2 - OFFSET MSJ
+		INT 7
+		MOV CL, 4
+		MOV BX, OFFSET CLAVE_ING
+LEER:		INT 6
+		INC BX
+                MOV DX, BX
+                MOV BX, OFFSET AST
+                MOV AL, 1
+                INT 7
+                MOV BX, DX
+		DEC CL
+		JNZ LEER
+                MOV DX, 3
+COMP:           MOV BX, OFFSET CLAVE
+                ADD BX, DX
+                MOV AL, [BX]
+                MOV BX, OFFSET CLAVE_ING
+                ADD BX, DX
+                CMP [BX], AL
+                JNZ ERROR
+                DEC DX
+                JNZ COMP
+                MOV BX, OFFSET LF
+                MOV AL, 1
+                INT 7
+		MOV BX, OFFSET MSJ2
+		MOV AL, OFFSET MSJ3 - OFFSET MSJ2
+		INT 7
+		JMP FIN
+ERROR:		INC ERRORES
+		CMP ERRORES, 5
+		JZ ECHAR
+                MOV BX, OFFSET LF       ; ← Agregar line feed
+                MOV AL, 1
+                INT 7
+		MOV BX, OFFSET MSJ3
+		MOV AL, OFFSET MSJ4 - OFFSET MSJ3
+		INT 7
+                MOV BX, OFFSET LF       ; ← Agregar line feed
+                MOV AL, 1
+                INT 7
+		JMP INICIO
+ECHAR:          MOV BX, OFFSET LF       ; ← Agregar line feed
+                MOV AL, 1
+                INT 7
+                MOV BX, OFFSET MSJ4
+		MOV AL, OFFSET ERRORES - OFFSET MSJ4
+		INT 7
+FIN:		HLT
+END
+
+
+
