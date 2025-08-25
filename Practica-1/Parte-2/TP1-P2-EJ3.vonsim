@@ -1,0 +1,67 @@
+; Ejercicio 3 - Errores comunes al mostrar y leer caracteres.
+
+
+;------------------------------------------
+; a)
+                ORG 1000h
+A               DB "HO LA"
+B               DB ?
+
+                ORG 2000H
+                MOV BX, OFFSET A
+                MOV AL, 4
+                INT 7
+END
+;------------------------------------------
+; b)
+                ORG 1000h
+A               DB "ARQ"
+B               DB ?
+
+                ORG 2000H
+                MOV AL, 3
+                MOV BX, A
+                INT 7
+END            
+;------------------------------------------
+; c)
+                ORG 1000h
+A               DB "HOLA"
+B               DB ?
+
+                ORG 2000H
+                MOV AL, OFFSET A - OFFSET B
+                MOV BX, OFFSET A
+                INT 7
+END
+;------------------------------------------
+; d)
+                ORG 1000H
+A               DB ?
+
+                ORG 2000H
+                MOV AL, 3
+                MOV BX, A
+                INT 6
+END
+;------------------------------------------
+; e)
+                ORG 1000H
+A               DB ?
+
+                ORG 2000H
+                INT 6
+                MOV BX, OFFSET A
+END
+;------------------------------------------
+; f)
+                ORG 1000H
+A               DB ?
+
+                ORG 2000H
+                MOV BX, A
+                INT 6
+                MOV AL, 1
+                INT 7
+END
+;------------------------------------------
