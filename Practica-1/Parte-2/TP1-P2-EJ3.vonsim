@@ -12,6 +12,8 @@ B               DB ?
                 MOV AL, 4
                 INT 7
 END
+
+;Errores: en AL (que debe guardar la longitud del string a imprimir) se almacena el valor 4, que no resulta la longitud de la cadena de texto guardada porque los espacios vacios cuentan.
 ;------------------------------------------
 ; b)
                 ORG 1000h
@@ -22,7 +24,8 @@ B               DB ?
                 MOV AL, 3
                 MOV BX, A
                 INT 7
-END            
+END
+;Errores: se guarda en BX el string almacenado en A, en vez de obtener la dirección donde comienza (OFFSET A).     
 ;------------------------------------------
 ; c)
                 ORG 1000h
@@ -34,6 +37,7 @@ B               DB ?
                 MOV BX, OFFSET A
                 INT 7
 END
+;Errores: en AL se intenta almacenar la longitud del string a imprimir pero la diferencia esta mal planteada, debiendo escribirse en orden inverso al dado: OFFSET B - OFFSET A.
 ;------------------------------------------
 ; d)
                 ORG 1000H
@@ -44,6 +48,7 @@ A               DB ?
                 MOV BX, A
                 INT 6
 END
+;errores: Se almqacena en BX el valor de A, en vez de su dirección con OFFSET.
 ;------------------------------------------
 ; e)
                 ORG 1000H
@@ -53,6 +58,7 @@ A               DB ?
                 INT 6
                 MOV BX, OFFSET A
 END
+;Errores: se ejecuta la interrupción INT 6 antes de guardar la dirección donde se almacenara el caracter a leer, con "MOV BX, OFFSET A" y no se almacena en AL la cantidad de carcteres a leer.
 ;------------------------------------------
 ; f)
                 ORG 1000H
@@ -64,4 +70,5 @@ A               DB ?
                 MOV AL, 1
                 INT 7
 END
+;errores: se guarda el valor de A en BX en vez de obtener su dirección con OFFSET A
 ;------------------------------------------
