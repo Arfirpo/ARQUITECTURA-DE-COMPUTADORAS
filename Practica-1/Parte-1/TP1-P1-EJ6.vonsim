@@ -104,3 +104,36 @@ END
 ;---------------------------------------------------------------------
 
 ;6D)
+                ORG 1000H
+
+MSJ             DB "Ingrese un caracter: ",0AH
+MSJ2            DB 0AH,"Fin del Programa."
+PUNTO           DB "."
+ASTERISCO       DB "*"
+CANT            DB ?
+CAR             DB ?
+ULT             DB ?
+
+                ORG 2000H              
+                MOV AL, OFFSET MSJ2 - OFFSET MSJ
+                MOV BX, OFFSET MSJ
+                INT 7
+                MOV CL, 0
+                MOV AL, 1
+                MOV BX, OFFSET CAR
+SIGO:           INT 6
+                MOV AH, [BX] 
+                CMP AH,2EH
+                JZ FIN
+                INC BX
+                INC CL
+                JMP SIGO
+FIN:            MOV CANT, CL
+                MOV AL, CL
+                MOV BX, OFFSET CAR
+                INT 7
+                MOV AL, OFFSET PUNTO - OFFSET MSJ2
+                MOV BX, OFFSET MSJ2
+                INT 7
+                HLT
+END
