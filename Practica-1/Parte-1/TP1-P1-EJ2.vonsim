@@ -1,19 +1,22 @@
-;Ejercicio 2 - Es Mayuscula
+;Ejercicio 2 - Mostrar mensajes con la pantalla de comandos
                 ORG 1000H
-C               DB 'A'
-RES             DB ?
+MSJ             DB "ARQUITECTURA DE COMPUTADORAS-"
+                DB "FACULTAD DE INFORMATICA-"
+                DB 55H
+                DB 4EH
+                DB 4CH
+                DB 50H
+FIN             DB ?
 
                 ORG 2000H
-                MOV AH, 41H             ;"A" EN ASCII
-                MOV AL, 5AH             ;"Z" EN ASCII
-                CMP C, AH
-                JS NO_ES_MAYUS          ;Si cmp prende el flag de signo, LA LETRA ES MENOR QUE "A"
-                CMP C, AL
-                JNS NO_ES_MAYUS
-                MOV RES, 0FFH
-                JMP FIN
-
-NO_ES_MAYUS:    MOV RES, 0
-FIN:            HLT
+                MOV BX, OFFSET MSJ
+                MOV AL, OFFSET FIN - OFFSET MSJ
+                INT 7
+                INT 0
 END
 
+;a) ¿que imprime el programa?
+;Imprime: "ARQUITECTURA DE COMPUTADORAS-FACULTAD DE INFORMATICA-UNLP"
+
+;B) ¿por que imprime UNLP? - c) Con referencia a la interrupción INT 7. ¿que se almacena en los registros BX y AL?
+;Imprime UNLP porque sobre el final del programa se ejecuta la instrucción INT 7 que imprime un string por pantalla, tomando la dirección donde comienza el string (guardado en BX) y recorriendo su longitud (almacenada en AL). Dicha longitud incluye los valores en hexadecimal que representan los caracteres U-N-L-P.

@@ -1,4 +1,4 @@
-;Ejercicio 4A - Mostrar Caracteres Individuales
+;Ejercicio 5A - Mostrar Caracteres Individuales
 
 		ORG 1000H
 c		DB 41H
@@ -14,7 +14,7 @@ SIGO:		INT 7
 FIN:		HLT
 END
 ;--------------------------------------------------------
-; Ejercicio 4-b2
+; Ejercicio 5B2
 		ORG 1000H
 LETRA 		DB 32			;primer codigo imprimible
 		ORG 2000H
@@ -28,7 +28,7 @@ MOSTRAR: 	INT 7
 FIN: 		HLT
 END
 ;--------------------------------------------------------
-; Ejercicio 4-c
+; Ejercicio 5c
 		ORG 1000H
 NUM   		DB "0"			
 ENTER		DB 10

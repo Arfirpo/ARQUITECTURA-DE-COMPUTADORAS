@@ -1,0 +1,19 @@
+;Ejercicio 2 - Es Mayuscula
+                ORG 1000H
+C               DB 'A'
+RES             DB ?
+
+                ORG 2000H
+                MOV AH, 41H             ;"A" EN ASCII
+                MOV AL, 5AH             ;"Z" EN ASCII
+                CMP C, AH
+                JS NO_ES_MAYUS          ;Si cmp prende el flag de signo, LA LETRA ES MENOR QUE "A"
+                CMP C, AL
+                JNS NO_ES_MAYUS
+                MOV RES, 0FFH
+                JMP FIN
+
+NO_ES_MAYUS:    MOV RES, 0
+FIN:            HLT
+END
+
