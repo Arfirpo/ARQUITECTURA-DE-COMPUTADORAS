@@ -1,0 +1,211 @@
+;Ejercicio 4 - Multiplicación de numero sin signo c/ parametros
+
+;4A)
+                ORG 1000H
+A               DB 5
+B               DB 0
+RES             DW ?
+
+                ORG 3000H
+MULTI:          PUSH CX
+                PUSH DX
+                CMP AL, 0
+                JZ VOLVER
+                CMP AH, 0
+                JZ VOLVER
+                MOV CH, 0
+                MOV CL, AL
+                MOV DX, 0
+LOOP:           ADD DX, CX
+                DEC AH
+                JNZ LOOP
+VOLVER:         MOV AX, DX
+                POP DX
+                POP CX
+                RET
+
+                ORG 2000H
+                MOV AL, A
+                MOV AH, B
+                CALL MULTI
+                MOV RES, AX
+                INT 0
+END
+;-------------------------------------------
+;4B)
+
+                ORG 1000H
+A               DB 5
+B               DB 5
+RES             DW ?
+
+                ORG 3000H
+MULTI:          PUSH BX
+                PUSH CX
+                PUSH DX
+                MOV BX,SP
+                
+                ADD BX,10
+                MOV BX,[BX]
+                MOV AL,[BX]
+                
+                MOV BX,SP
+                
+                ADD BX,8
+                MOV BX,[BX]
+                MOV AH,[BX]
+                
+                MOV DX, 0
+                CMP AL, 0
+                JZ VOLVER
+                CMP AH, 0
+                JZ VOLVER
+                MOV CH, 0
+                MOV CL, AL
+LOOP:           ADD DX, CX
+                DEC AH
+                JNZ LOOP
+VOLVER:         MOV AX, DX
+                POP DX
+                POP CX
+                POP BX
+                RET
+
+                ORG 2000H
+                MOV BX, OFFSET A
+                PUSH BX
+                MOV BX, OFFSET B
+                PUSH BX
+                CALL MULTI
+                MOV RES, AX
+                POP BX
+                POP BX
+                INT 0
+END
+;-------------------------------------------
+;4C)
+                ORG 1000H
+A               DB 5
+B               DB 5
+RES             DW ?
+
+                ORG 3000H
+MULTI:          PUSH CX
+                PUSH DX
+                MOV DX, 0
+                CMP AL, 0
+                JZ VOLVER
+                CMP AH, 0
+                JZ VOLVER
+                MOV CH, 0
+                MOV CL, AL
+LOOP:           ADD DX, CX
+                DEC AH
+                JNZ LOOP
+VOLVER:         MOV RES, DX
+                MOV AX, OFFSET RES
+                POP DX
+                POP CX
+                RET
+
+                ORG 2000H
+                MOV AL, A
+                MOV AH, B
+                CALL MULTI
+                INT 0
+END
+;-------------------------------------------
+;4D)
+
+                ORG 1000H
+A               DB 5
+B               DB 2
+RES             DW ?
+
+                ORG 3000H
+MULTI:          PUSH BX
+                PUSH CX
+                PUSH DX
+                MOV BX,SP
+                
+                ADD BX,10
+                MOV AL,[BX]
+                MOV BX,SP
+                ADD BX,8
+                MOV AH,[BX]
+                MOV DX, 0
+                CMP AL, 0
+                JZ VOLVER
+                CMP AH, 0
+                JZ VOLVER
+                MOV CH, 0
+                MOV CL, AL
+LOOP:           ADD DX, CX
+                DEC AH
+                JNZ LOOP
+VOLVER:         MOV AX, DX
+                POP DX
+                POP CX
+                POP BX
+                RET
+
+                ORG 2000H
+                MOV BL, A
+                MOV BH,0
+                PUSH BX
+                MOV BL, B
+                MOV BH,0
+                PUSH BX
+                CALL MULTI
+                POP BX
+                POP BX
+                MOV RES, AX
+                INT 0
+END
+;-------------------------------------------
+;4E)
+                ORG 1000H
+A               DB 5
+B               DB 2
+RES             DW ?
+
+                ORG 3000H
+MULTI:          PUSH BX
+                PUSH CX
+                PUSH DX
+                MOV BX,SP
+                
+                ADD BX,10
+                MOV AL,[BX]
+                MOV BX,SP
+                ADD BX,8
+                MOV AH,[BX]
+                MOV DX, 0
+                CMP AL, 0
+                JZ VOLVER
+                CMP AH, 0
+                JZ VOLVER
+                MOV CH, 0
+                MOV CL, AL
+LOOP:           ADD DX, CX
+                DEC AH
+                JNZ LOOP
+VOLVER:         MOV AX, DX
+                POP DX
+                POP CX
+                POP BX
+                RET
+
+                ORG 2000H
+                MOV BL, A
+                MOV BH,0
+                PUSH BX
+                MOV BL, B
+                MOV BH,0
+                PUSH BX
+                CALL MULTI
+                POP BX
+                POP BX
+                MOV RES, AX
+                INT 0
+END
