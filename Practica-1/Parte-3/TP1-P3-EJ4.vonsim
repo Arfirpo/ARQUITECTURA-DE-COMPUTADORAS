@@ -174,11 +174,12 @@ MULTI:          PUSH BX
                 PUSH CX
                 PUSH DX
                 MOV BX,SP
-                
                 ADD BX,10
+                MOV BX,[BX]
                 MOV AL,[BX]
                 MOV BX,SP
                 ADD BX,8
+                MOV BX,[BX]
                 MOV AH,[BX]
                 MOV DX, 0
                 CMP AL, 0
@@ -197,11 +198,9 @@ VOLVER:         MOV AX, DX
                 RET
 
                 ORG 2000H
-                MOV BL, A
-                MOV BH,0
+                MOV BX, OFFSET A
                 PUSH BX
-                MOV BL, B
-                MOV BH,0
+                MOV BX, OFFSET B
                 PUSH BX
                 CALL MULTI
                 POP BX
