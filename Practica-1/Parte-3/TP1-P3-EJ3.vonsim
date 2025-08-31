@@ -1,0 +1,40 @@
+;3) Operaciones con Carácteres 
+
+                ORG 1000H
+MSJ             DB "hOLa, bueNAS tARDES"
+ULT             DB ?
+
+                ORG 3000H
+;--------------------------------
+STRING_A_MINUS: MOV CL, [BX]
+                CALL ES_MAYUS
+                CMP AH, 0FFH
+                JNZ AVANZO
+                CALL A_MINUS
+                MOV [BX], CL
+AVANZO:         RET
+;--------------------------------
+ES_MAYUS:       CMP CL, 41H
+                JS NO_ES_MAYUS
+                CMP CL, 5AH
+                JNS NO_ES_MAYUS
+                MOV AH, 0FFh
+                JMP FIN
+NO_ES_MAYUS:    MOV AH, 0
+FIN:            RET
+;-------------------------------
+A_MINUS:        ADD CL, 20H
+                RET
+;--------------------------------
+                ORG 2000H
+                MOV AL, OFFSET ULT - OFFSET MSJ
+                MOV BX, OFFSET MSJ
+SIGO:           CALL STRING_A_MINUS
+                INC BX
+                DEC AL
+                JNZ SIGO
+                INT 0
+END
+                
+
+
