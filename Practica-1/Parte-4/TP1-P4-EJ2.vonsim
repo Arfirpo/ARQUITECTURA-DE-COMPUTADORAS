@@ -1,78 +1,58 @@
-;Escribir un programa que permita a una persona desafiar a otra jugando al ahorcado secuencial. En el ahorcado
-;secuencial, a diferencia del tradicional, hay que adivinar las letras en orden. Por ejemplo, si la palabra a adivinar es
-;“alma”, la persona que adivina debe ingresar primero la “a”, luego la “l”, luego la “m” y finalmente debe ingresar
-;nuevamente la “a”.
-;El programa tiene dos fases: primero, una persona carga la palabra a adivinar, y luego la otra persona adivina la palabra.
-;● Fase 1: Se debe mostrar el mensaje “Ingresá la palabra a adivinar: ”. Luego, se debe leer un string hasta que
-;llegue el carácter “.”, y al terminar de leer, se debe mostrar el mensaje “Comenzá a adivinar!”.
-;● Fase 2: se deben leer carácteres hasta que la persona termine de adivinar todo el string, o se le acaben los
-;intentos.
-;Si la persona ingresa un carácter que coincide con el que tenía que adivinar, se muestra ese carácter en
-;pantalla, y se avanza al carácter siguiente del string a adivinar. De lo contrario, no se muestra nada, y la
-;persona debe seguir intentando. Sí adivinó todo el string, debe mostrarse el mensaje “Ganaste!”.
-;La persona tiene 50 intentos de letras para adivinar el string. Si se acaba la cantidad de intentos y no adivinó
-;todo el string, debe mostrarse el mensaje “Perdiste, el string era S”, donde S es el string a adivinar completo.
+;ejercicio 2 - Ahorcado secuencial
+                ORG 1000H
+INTENTOS        DB 10
+INGRESAR        DB "Ingresa la palabra a adivinar: ", 0AH
+ADIVINAR        DB "Comenzá a adivinar: ", 0AH
+GANASTE         DB 0AH,"Ganaste!"
+PERDI           DB "Perdiste, el String era: "
+STRING          DB ?
 
+                ORG 1200H
+STRINGEVAL      DB ?
 
-    org 1000h
-  ingre   db "Ingresá la palabra a adivinar: ", 0ah
-  comien  db "Comenzá a adivinar "
-  win     db 0ah, "GANASTE"
-  loose   db "Perdiste, el string era: "
-  cantInt db 50
-  pun     db "."
-  palabra db ?
-  intento db ?
-
-    org 2000h
-      mov cl, 0
-      mov ch, 50
-      mov dl, pun
-      mov al, offset comien - offset ingre
-      mov bx, offset ingre
-      int 7
-      
-      mov al, 1
-      mov bx, offset palabra
-      
-sigo: int 6
-      cmp dl, [bx]
-      jz  adivi 
-      inc cl
-      inc bx
-      jmp sigo
-      
-adivi: mov al, offset win - offset comien
-       mov bx, offset comien
-       int 7 
-
-;lógica de adivinar
-           mov al, 1
-intentar:  mov bx, offset intento
-           int 6
-
-           mov dh, [bx]
-
-           mov bx, offset palabra
-           cmp dh, [bx]
-           jz mostrar    
-           dec ch
-           jnz intentar
-           mov al, offset cantInt- offset loose
-           mov bx, offset loose
-           int 7
-           jmp fin
-           
-mostrar:   int 7
-           inc bx
-           dec cl
-           jnz intentar
-        
-           mov al, offset loose - offset win
-           mov bx, offset win
-           int 7
-       
-   fin:    int 0
-    end
-; si no es cero, decremento y sigo intentando
-; si es cero, mostrar el caracter, avanzar a la próxima posición y continuar
+                ORG 2000H
+                MOV BX, OFFSET INGRESAR ; Mensaje Inicial
+                MOV AL, OFFSET ADIVINAR - OFFSET INGRESAR
+                INT 7
+                MOV DH, 0
+                MOV CL, 0
+                MOV BX, OFFSET STRING
+INGRESO:        INT 6
+                MOV AL, BYTE PTR [BX]
+                INC BX
+                INC CL
+                CMP AL, '.'
+                JNZ INGRESO                
+                DEC CL
+                
+                MOV BX, OFFSET ADIVINAR
+                MOV AL, OFFSET GANASTE - OFFSET ADIVINAR
+                INT 7
+                MOV CH, INTENTOS
+                MOV AX, OFFSET STRING
+VOLVER:         MOV BX, OFFSET STRINGEVAL
+                INT 6
+                MOV DL, BYTE PTR [BX]
+                MOV BX, AX
+                CMP DL, BYTE PTR [BX]
+                JZ SEGUIR
+                DEC CH
+                JNZ VOLVER
+PERDISTE:       MOV BX, OFFSET STRING
+                MOV AL, OFFSET STRING - OFFSET PERDI
+                ADD AL, CL
+                INT 7
+                JMP FIN
+SEGUIR:         DEC CL
+                MOV BX, AX
+                MOV AL, 1
+                INT 7
+                MOV AX, BX
+                INC AX
+                CMP CL, 0
+                JNZ VOLVER
+                MOV BX, OFFSET GANASTE
+                MOV AL, OFFSET PERDI - OFFSET GANASTE
+                INT 7
+FIN:            INT 0
+END

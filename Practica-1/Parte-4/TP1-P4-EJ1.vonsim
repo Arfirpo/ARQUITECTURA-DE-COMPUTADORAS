@@ -1,4 +1,4 @@
-;Ejercicio 5 - Acceso con Contraseña
+;Ejercicio 1 - Acceso con Contraseña
 		ORG 1000H
 MSJ		DB "INGRESE SU CONTRASEÑA: "
 MSJ2		DB "ACCESO PERMITIDO"
