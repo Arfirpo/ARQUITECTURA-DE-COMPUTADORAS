@@ -1,0 +1,18 @@
+a) Entradas de la impresora: data y strobe.
+Salida de la impresora: busy.
+
+b) La impresora sólo imprime cuando busy = 0 y ocurre un flanco ascendente en strobe. Analizando cada carácter:
+
+h: strobe sube con busy = 0 → se imprime h.
+
+o: strobe sube con busy = 1 → no se imprime o.
+
+l: strobe sube con busy = 0 → se imprime l.
+
+a: strobe sube con busy = 0 → se imprime a.
+
+a (último): strobe sube con busy = 0 → se imprime a.
+
+Resultado impreso: "hlaa". Los caracteres no impresos fueron o (porque busy = 1 en ese momento).
+
+c) Si no existiera strobe la impresora no tendría el pulso que le indica cuándo capturar el dato — con solo busy no podría distinguir instantes de lectura. En la práctica eso produciría lecturas incorrectas (por ejemplo imprimir solo un carácter en vez de dos, repetir, o perder datos).
