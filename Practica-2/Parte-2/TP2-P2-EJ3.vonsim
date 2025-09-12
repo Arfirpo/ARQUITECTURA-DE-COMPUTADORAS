@@ -1,0 +1,17 @@
+
+
+STROBE			EQU 00000010B
+
+			ORG 3000H
+
+FLANCO_ASCENDENTE:	PUSH AX
+			IN AL, PA
+			MOV AH, STROBE
+			NOT AH
+			AND AL, AH        ;pongo bit STROBE en 0
+			OUT PA, AL
+			IN AL, PA
+			OR AL, STROBE     ;pongo bit STROBE en 1
+			OUT PA, AL
+			POP AX
+			RET

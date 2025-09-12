@@ -1,0 +1,18 @@
+PA  		EQU 30h
+CA  		EQU 32h
+
+		ORG 1000h
+si         	DB "Ocupada"
+no   		DB "Libre"
+		
+		ORG 2000H
+		MOV AL, 0FFH
+		OUT CA, al
+POLL:      	IN AL, PA
+		AND AL, 1
+		JNZ POLL
+		MOV BX, OFFSET NO
+		MOV AL, 5
+		INT 7
+FN:        	INT 0
+END
