@@ -4,13 +4,19 @@ CA              EQU 32H
 CB              EQU 33H
 
                 ORG 1000H
-CAR             DB "A" 
+msj             DB "organización y "
+                DB "arquitectura de "
+                DB "computadoras"
+fin             db ?
 
                 ORG 3000H
 INI_PIO:        PUSH AX
-                MOV AL, 11111101B
+                IN AL, CA
+                OR AL, 00000001B
                 OUT CA, AL       ;CONFIGURO BIT DE BUSY COMO ENTRADA
-                mov AL, 
+                IN AL, CA
+                AND AL, 11111101B ;CONFIGURO BIT DE STROBE COMO SALIDA
+                OUT CA, AL
                 IN AL, CB
                 AND AL, 00000000B ;CONFIGURO BYTE DE DATA COMO SALIDA
                 OUT CB, AL
@@ -45,7 +51,12 @@ LOOP:           CALL POLL
 
                 ORG 2000H
                 CALL INI_PIO
-                MOV AL, CAR
+                MOV CL, OFFSET FIN - OFFSET MSJ
+                MOV BX, OFFSET MSJ
+SEGUIR:         MOV AL, [BX]
                 CALL IMP_CAR
+                INC BX
+                DEC CL
+                JNZ SEGUIR
                 INT 0
 END
