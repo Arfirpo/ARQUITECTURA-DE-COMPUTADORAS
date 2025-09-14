@@ -1,0 +1,45 @@
+;Constantes
+PA EQU 30H
+PB EQU 31H
+CA EQU 32H
+CB EQU 33H
+
+;Variables      
+                ORG 1000H
+CADENA          DB ?
+
+;Subrutinas
+                ORG 3000H
+INI_PIO:        MOV AL, 0FFH
+                OUT CA, AL
+                MOV AL, 0
+                OUT CB, AL
+                RET
+
+AVISO:          MOV AL, 0FFH
+                OUT PB, AL
+                RET
+
+LEER:           IN AL, PA
+                CMP AL, 'O'
+                JZ ULT
+                MOV DL, 0FFH
+                JMP FIN
+ULT:            MOV DL, 0 
+FIN:            RET
+
+
+;Programa Principal
+                ORG 2000H
+                CALL INI_PIO
+                MOV BX, OFFSET CADENA
+LOOP:           CALL AVISO
+                CALL LEER
+                CMP DL, 0
+                JZ FN
+                MOV [BX], AL
+                INC BX
+                JMP LOOP
+FN:             INT 0
+END
+

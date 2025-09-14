@@ -1,0 +1,42 @@
+;Constantes
+PB EQU 31H
+CB EQU 33H
+
+;Variables
+                ORG 1000H
+MSJ             DB "UNLP"
+FN              DB ?
+
+;Subrutinas
+                ORG 3000H
+INI_PIO:        MOV AL, 0
+                OUT CB, AL
+                RET
+
+AVISO:          MOV AL, 'O'
+                OUT PB, AL
+                RET
+
+ENV_CAR:        OUT PB, AL
+                RET
+
+ENV_FIN:        MOV AL, 255
+                OUT PB, AL
+                RET
+
+;Programa Principal
+
+                ORG 2000H
+                CALL INI_PIO
+                MOV BX, OFFSET MSJ
+                MOV CL, OFFSET FN - OFFSET MSJ
+ SEGUIR:        CALL AVISO
+                MOV AL, [BX]
+                CALL ENV_CAR
+                INC BX
+                DEC CL
+                JNZ SEGUIR
+                CALL ENV_FIN
+                INT 0
+END
+
