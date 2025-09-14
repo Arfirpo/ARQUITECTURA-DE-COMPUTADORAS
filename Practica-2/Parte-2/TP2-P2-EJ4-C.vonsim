@@ -1,0 +1,57 @@
+PA              EQU 30H
+PB              EQU 31H
+CA              EQU 32H
+CB              EQU 33H
+
+                ORG 1000H
+MSJ             DB "INGRESE PALABRA DE 5 CARACTERES:"
+FN              DB ?
+
+                ORG 1500H
+CAR             DB ?
+
+                ORG 3000H
+
+INI_PIO:        MOV AL, 1
+                OUT CA, AL
+                MOV AL, 0
+                OUT CB, AL
+                RET
+
+FLANCO_ASC:     PUSH AX
+                IN AL, PA
+                AND AL, 1
+                OUT PA, AL
+                IN AL, PA
+                OR AL, 2
+                OUT PA, AL
+                POP AX
+                RET
+
+POLL:           PUSH AX
+SEG:            IN AL, PA
+                AND AL, 1
+                JNZ SEG
+                POP AX
+                RET
+
+IMP_CAR:        CALL POLL
+                OUT PB, AL
+                CALL FLANCO_ASC
+                RET            
+                
+                ORG 2000H
+                CALL INI_PIO
+                MOV AL, OFFSET FN - OFFSET MSJ
+                MOV BX, OFFSET MSJ
+                INT 7
+                MOV CL, 5
+LAZO:           MOV BX, OFFSET CAR
+                MOV AL, 1
+                INT 6
+                MOV AL, [BX]
+                CALL IMP_CAR
+                DEC CL
+                JNZ LAZO
+                INT 0
+END

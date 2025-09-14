@@ -7,40 +7,37 @@ CB              EQU 33H
 CAR             DB "A" 
 
                 ORG 3000H
-INI_PIO:        PUSH AX
-                MOV AL, 11111101B
-                OUT CA, AL       ;CONFIGURO BIT DE BUSY COMO ENTRADA
-                mov AL, 
-                IN AL, CB
-                AND AL, 00000000B ;CONFIGURO BYTE DE DATA COMO SALIDA
-                OUT CB, AL
-                POP AX
+INI_PIO:        MOV AL, 1       ; 00000001B
+                OUT CA, AL      ;CONFIGURO BIT DE BUSY COMO ENTRADA
+                AND AL, 0       ; 00000000B
+                OUT CB, AL      ;CONFIGURO BYTE DE DATA COMO SALIDA
                 RET
+
 POLL:           PUSH AX
                 IN AL, PA
-                AND AL, 00000010B
+                AND AL, 1
                 JZ LIBRE
                 MOV DL, 0FFH
                 JMP FN
 LIBRE:          MOV DL, 0
 FN:             POP AX
                 RET
-FLANCO_ASC:     PUSH AX
-                IN AL, PA
+
+FLANCO_ASC:     IN AL, PA
                 AND AL, 11111101B ; FUERZO UN 0
                 OUT PA, AL        ;MANDO UN 0 AL BIT DE STROBE
                 IN AL, PA
                 OR AL, 00000010B  ; FUERZO UN 1
                 OUT PA, AL        ;MANDO UN 1 AL BIT DE STROBE
-                POP AX
                 RET
+
 IMP_CAR:        PUSH AX
 LOOP:           CALL POLL
                 CMP DL, 0
                 JNZ LOOP
+                POP AX
                 OUT PB, AL
                 CALL FLANCO_ASC
-                POP AX
                 RET               
 
                 ORG 2000H

@@ -1,4 +1,4 @@
-PA              EQU 30H         ;Puerto para Strob y Busy
+PA              EQU 30H         ;Puerto para Strobe y Busy
 PB              EQU 31H         ;Puerto para Data
 CA              EQU 32H
 CB              EQU 33H
@@ -10,27 +10,13 @@ msj             DB "organización y "
 fin             db ?
 
                 ORG 3000H
-INI_PIO:        PUSH AX
-                IN AL, CA
-                OR AL, 00000001B
-                OUT CA, AL       ;CONFIGURO BIT DE BUSY COMO ENTRADA
-                IN AL, CA
-                AND AL, 11111101B ;CONFIGURO BIT DE STROBE COMO SALIDA
-                OUT CA, AL
-                IN AL, CB
-                AND AL, 00000000B ;CONFIGURO BYTE DE DATA COMO SALIDA
+INI_PIO:        MOV AL, 00000001B
+                OUT CA, AL        ;CONFIGURO BIT DE BUSY COMO ENTRADA
+                MOV AL, 00000000B ;CONFIGURO BYTE DE DATA COMO SALIDA
                 OUT CB, AL
-                POP AX
                 RET
-POLL:           PUSH AX
-                IN AL, PA
-                AND AL, 00000010B
-                JZ LIBRE
-                MOV DL, 0FFH
-                JMP FN
-LIBRE:          MOV DL, 0
-FN:             POP AX
-                RET
+                
+
 FLANCO_ASC:     PUSH AX
                 IN AL, PA
                 AND AL, 11111101B ; FUERZO UN 0
@@ -40,13 +26,17 @@ FLANCO_ASC:     PUSH AX
                 OUT PA, AL        ;MANDO UN 1 AL BIT DE STROBE
                 POP AX
                 RET
-IMP_CAR:        PUSH AX
-LOOP:           CALL POLL
-                CMP DL, 0
-                JNZ LOOP
+
+POLL:           PUSH AX
+SEG:            IN AL, PA
+                AND AL, 1
+                JNZ SEG
+                POP AX
+                RET
+
+IMP_CAR:        CALL POLL
                 OUT PB, AL
                 CALL FLANCO_ASC
-                POP AX
                 RET               
 
                 ORG 2000H
