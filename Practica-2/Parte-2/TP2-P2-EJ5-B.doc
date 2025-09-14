@@ -1,0 +1,8 @@
+b) ¿Qué diferencias encuentra con el ejercicio anterior? ¿Cuál es la ventaja en utilizar el HAND-SHAKE
+con respecto PIO para comunicarse con la impresora? ¿Esta ventaja también valdría para otros
+dispositivos, como las luces?
+Rta: El HAND-SHAKE fue diseñado específicamente para las impresoras centronics, tiene la
+“inteligencia” para hacer todas las tareas necesarias de comunicación con la impresora. Automatiza la
+señal de strobe; es decir, no se requiere generación de pulso de strobe, se encarga el propio HAND.
+Además trabaja en modo interrupción (lo veremos más adelante). El PIO puede conectarse a otros
+dispositivos genéricos. El HAND trabaja especificamente con la impresora.

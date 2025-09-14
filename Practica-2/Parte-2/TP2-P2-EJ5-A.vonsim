@@ -1,0 +1,38 @@
+DATO            EQU 40H
+ESTADO          EQU 41H
+
+                ORG 1000H
+MSJ             DB "INGENIERIA E INFORMATICA"
+FN              DB ?
+
+                ORG 3000H
+POLL:           IN AL, ESTADO
+                NOP
+                NOP
+                NOP
+                NOP
+                NOP
+                NOP
+                AND AL, 1
+                JNZ POLL
+                RET
+
+                
+IMP_CAR_HAND    PUSH AX
+                CALL POLL
+                POP AX
+                OUT DATO, AL
+                RET
+
+                ORG 2000H
+                IN AL, ESTADO
+                AND AL, 7FH     ;01111111B (SETEO BIT 7 EN MODO CONSULTA DE ESTADO)
+                MOV BX, OFFSET MSJ
+                MOV CL, OFFSET FN - OFFSET MSJ
+SEGUIR:         MOV AL, [BX]
+                CALL IMP_CAR_HAND
+                INC BX
+                DEC CL
+                JNZ SEGUIR
+                INT 0
+END
