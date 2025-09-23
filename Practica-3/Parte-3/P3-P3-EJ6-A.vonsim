@@ -1,0 +1,128 @@
+;F10, lectura e Impresora con PIO ⭐⭐⭐
+;Escribir un programa que debe mostrar en pantalla el mensaje “PRESIONE F10 PARA COMENZAR” y una vez que el usuario 
+;presiona F10, leer de teclado un mensaje de 10 caracteres. Este mensaje debe luego ser enviado a través de la pila 
+;a una subrutina para imprimirse en la impresora mediante el PIO. La configuración del PIO también 
+;debe hacerse en una subrutina aparte.
+
+
+;CONSTANTES
+
+;PIC
+EOI    EQU 20H
+IMR    EQU 21H
+INT0   EQU 24H
+ID_F10 EQU 15
+;PIO
+PA     EQU 30H
+PB     EQU 31H
+CA     EQU 32H
+CB     EQU 33H
+
+              ;VARIABLES
+              ORG 1000H
+INI           DB "PRESIONE F10 PARA COMENZAR:"
+FN            DB ?
+
+              ORG 1500H
+MSJ           DB ?
+FN2           DB ?
+              
+
+              ;SUBRUTINAS
+
+              ORG 60
+              DW RUT_F10
+
+              ORG 3000H
+RUT_F10:                   ;INTERRUPCIÓN
+              CALL LEER_CAR
+              CALL INI_PIO
+              MOV BX, OFFSET MSJ
+              PUSH BX
+              CALL IMP_CAR
+              POP BX
+              
+              
+              
+              
+              MOV AL, EOI
+              OUT EOI, AL
+              IRET
+
+              ORG 3100H
+POLL:                     ;CONSULTA DE ESTADO
+              IN AL, PA
+              AND AL, 1
+              JNZ POLL
+              RET
+
+              ORG 3200H
+STROBE_0:
+              IN AL, PA
+              AND AL, 0FCH    ;11111101B
+              OUT PA, AL
+              RET
+
+STROBE_1:
+              IN AL, PA
+              OR AL, 2        ;00000010B
+              OUT PA, AL
+              RET
+
+              ORG 3300H
+INI_PIO:
+              MOV AL, 2
+              OUT CA, AL
+              MOV AL, 0
+              OUT CB, AL
+              RET
+
+              ORG 3400H
+IMP_CAR:      
+              
+              PUSH AX
+              PUSH BX
+              MOV BX, SP
+              ADD BX, 6
+              MOV BX, [BX]
+              CALL POLL
+              MOV AL, [BX]
+              OUT PB, AL
+              CALL STROBE_0
+              CALL STROBE_1
+              POP BX
+              POP AX
+              RET
+
+              ORG 3500H
+LEER_CAR:     
+              PUSH AX
+              PUSH BX
+              PUSH CX
+              MOV AL, 1
+              MOV CL, 10
+              MOV BX, OFFSET MSJ
+LEER:         INT 6
+              INC BX
+              DEC CL
+              JNZ LEER
+              POP CX
+              POP BX
+              POP AX
+              RET
+
+              ;PROGRAMA PRINCIPAL
+              ORG 2000H
+              CLI
+              MOV AL, 0FEH    ;11111110B
+              OUT IMR, AL
+              MOV AL, ID_F10
+              OUT INT0, AL
+              STI
+              
+              MOV BX, OFFSET INI
+              MOV AL, OFFSET FN - OFFSET INI
+              INT 7
+LOOP:         JMP LOOP            
+END
+
