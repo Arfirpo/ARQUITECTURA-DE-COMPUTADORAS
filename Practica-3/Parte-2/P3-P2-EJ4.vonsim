@@ -1,0 +1,33 @@
+;Constantes
+EOI  EQU 20H
+IMR  EQU 21H
+INT0 EQU 24H
+INT1 EQU 25H
+
+N_F10      EQU 15
+N_TIMER    EQU 20
+
+;posiciones del vector de interrupciones
+           ORG 60
+           DW RUT_F10
+
+           ORG 80
+           DW RUT_TIMER
+
+;Subrutinas
+           ORG 3000H
+RUT_F10:
+           IRET
+
+           ORG 3100H
+RUT_TIMER:
+           IRET
+
+;Programa Principal
+           ORG 2000H
+           CLI
+           STI
+           
+
+
+END

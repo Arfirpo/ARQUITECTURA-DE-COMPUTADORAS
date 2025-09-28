@@ -1,0 +1,14 @@
+A. ¿Qué hacen las instrucciones CLI y STI? ¿Qué podría suceder si no están las mismas y la persona que usa el programa presiona F10 rápidamente durante la configuración del PIC?
+        La instrucción CLI inhibe las interrupciones enmascarables. la instrucción STI las vuelve a habilitar. Las interrupciones enmascarables son las interrupciones gestionadas por el PIC. 
+        Si no están las mismas mientras configuramos el PIC, la CPU podría recibir un pedido de interrupción de un vector que aún no este configurado (en este caso el registro INT0), eso podría hacer que la CPU busque la rutina manejadora de la interrupción en la dirección equivocada y se termine ejecutando código en otra dirección de memoria.
+
+B. ¿Por qué se usa el valor 0FEH en el programa?
+        El valor 0FEH lo usamos para configurar el registro IMR del PIC, para habilitar solamente la interrupción F10 del simulador.
+
+C. ¿Qué instrucciones le indican al PIC que la interrupción ha terminado?
+        Se debe escribir el valor 20h en el registro EOI para indicar al PIC que se terminó de procesar la interrupción. Esto lo hacemos con las instrucciones:
+                MOV AL, EOI
+                OUT EOI, AL
+
+D. ¿En qué dirección se encuentra la subrutina que atiende las interrupciones del F10?
+        La subrutina que atiende la interrupción se encuentra a partir de la dirección 3000h.

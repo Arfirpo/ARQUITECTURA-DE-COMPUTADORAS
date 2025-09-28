@@ -1,0 +1,44 @@
+;constantes
+EOI         EQU 20H
+IMR         EQU 21H
+INT0        EQU 24H
+N_F10       EQU 15     
+
+;variables 
+            ORG 1000H
+CANT        DB 5
+MSJ         DB "VAMOS LAS INTERRUPCIONES!",0AH
+FN          DB ?
+
+            ORG 60
+            DW RUT_F10
+
+;subrutinas
+            ORG 3000H
+RUT_F10:    PUSH AX
+            PUSH BX
+            MOV BX, OFFSET MSJ
+            MOV AL, OFFSET FN - OFFSET MSJ
+            INT 7
+            DEC CANT
+            JNZ SEGUIR
+            IN AL, IMR
+            OR AL, 1
+            OUT IMR, AL
+SEGUIR:     POP BX
+            MOV AL, EOI
+            OUT EOI, AL
+            POP AX
+            IRET
+
+;Programa Principal
+            ORG 2000H
+            CLI
+            MOV AL, 0FEH;
+            OUT IMR, AL
+            MOV AL, N_F10
+            OUT INT0, AL
+            STI
+LAZO:       JMP LAZO
+
+END
