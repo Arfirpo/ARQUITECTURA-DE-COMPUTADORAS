@@ -1,0 +1,49 @@
+;constantes
+
+;PIC
+EOI    EQU 20H
+IMR    EQU 21H
+INT2   EQU 26H
+
+N_HAND  EQU 25
+
+;HANDSHAKE
+DATO   EQU 40H
+ESTADO EQU 41H
+
+;variables
+
+                ORG 1000H
+MSJ             DB "UNIVERSIDAD NACIONAL DE LA PLATA"
+FN              DB ?                
+
+                ORG 100
+                DW RUT_HAND
+
+
+;Subrutinas
+                ORG 3000h
+CONF_HAND:
+                IN AL, ESTADO
+                OR AL, 80H
+                OUT ESTADO, AL
+                RET
+
+                ORG 3100H
+RUT_HAND:       PUSH AX
+                PUSH BX
+                
+                IRET
+
+
+
+                ORG 2000H
+                CALL CONF_HAND
+                CLI
+                MOV AL, 0FBH
+                OUT IMR, AL
+                MOV AL, N_HAND
+                OUT INT2, AL
+                STI
+
+END
