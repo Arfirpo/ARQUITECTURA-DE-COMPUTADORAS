@@ -1,49 +1,59 @@
 ;constantes
 
-;PIC
+;Pic
 EOI    EQU 20H
 IMR    EQU 21H
 INT2   EQU 26H
 
-N_HAND  EQU 25
+N_HAND EQU 20
 
-;HANDSHAKE
-DATO   EQU 40H
-ESTADO EQU 41H
+;Hand
+DATO      EQU 40H
+ESTADO    EQU 41H
 
-;variables
+                      ;variables
+                      ORG 1000H
+MSJ    DB "UNIVERSIDAD NACIONAL DE LA PLATA"
+FN     DB ?
 
-                ORG 1000H
-MSJ             DB "UNIVERSIDAD NACIONAL DE LA PLATA"
-FN              DB ?                
 
-                ORG 100
+                ORG 80
                 DW RUT_HAND
 
-
-;Subrutinas
-                ORG 3000h
-CONF_HAND:
-                IN AL, ESTADO
-                OR AL, 80H
-                OUT ESTADO, AL
-                RET
-
-                ORG 3100H
-RUT_HAND:       PUSH AX
-                PUSH BX
-                
+                ORG 3000H
+RUT_HAND:
+                PUSH AX
+                MOV AL, [BX]
+                OUT DATO, AL
+                INC BX
+                DEC CL
+                JNZ FINAL
+                MOV AL, 0FFH
+                OUT IMR, AL
+FINAL:          MOV AL, EOI
+                OUT EOI, AL
+                POP AX
                 IRET
 
-
-
+                ;Programa Principal  
                 ORG 2000H
-                CALL CONF_HAND
+                MOV BX, OFFSET MSJ
+                MOV CL, OFFSET FN - OFFSET MSJ
+                
                 CLI
                 MOV AL, 0FBH
                 OUT IMR, AL
                 MOV AL, N_HAND
                 OUT INT2, AL
+                IN AL, ESTADO
+                OR AL, 80H
+                OUT ESTADO, AL
                 STI
-
+                
+LOOP:           CMP CL, 0
+                JNZ LOOP
+                IN AL, ESTADO
+                AND AL, 7FH
+                OUT ESTADO, AL
+                INT 0
 END
