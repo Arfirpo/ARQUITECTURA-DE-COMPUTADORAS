@@ -1,0 +1,95 @@
+;constantes
+
+;pic
+EOI    EQU 20H
+IMR    EQU 21H
+INTO   EQU 24H
+INT2   EQU 26H
+
+;handshake
+ESTADO EQU 41H
+DATO   EQU 40H
+N_HAND EQU 20
+
+;F10
+N_F10  EQU 15
+
+            ORG 60
+            DW RUT_F10
+
+            ORG 80
+            DW RUT_HAND
+
+;variables
+            ORG 1000H
+MSJ         DB "UNIVERSIDAD DE LA PLATA"
+FN          DB ?
+FIN         DB 0
+            
+
+            
+;subrutinas
+            ORG 3000H
+RUT_F10:    
+            PUSH AX
+            MOV AL, 0FFH
+            OUT IMR, AL
+            CALL ON_OF_HND
+            MOV FIN, 1
+            MOV AL, EOI
+            OUT EOI, AL
+            POP AX
+            IRET
+
+            ORG 3100H
+RUT_HAND:   
+            PUSH AX
+            CMP FIN, 1
+            JZ SEGUIR
+            MOV AL, [BX]
+            OUT DATO, AL
+            INC BX
+            DEC CL
+            JNZ SEGUIR
+            MOV AL, 0FFH
+            OUT IMR, AL
+            CALL ON_OF_HND
+            MOV FIN, 1
+SEGUIR:     MOV AL, EOI
+            OUT EOI, AL
+            POP AX
+            IRET
+
+            ORG 3200H
+ON_OF_HND:    
+            CMP FIN, 1
+            JZ CERRAR
+            IN AL, ESTADO
+            OR AL, 80H
+            OUT ESTADO, AL
+            JMP FNL
+CERRAR:     IN AL, ESTADO
+            AND AL, 7FH
+            OUT ESTADO, AL
+FNL:        RET
+
+            
+;programa principal
+            ORG 2000H
+            MOV BX, OFFSET MSJ
+            MOV CL, OFFSET FN - OFFSET MSJ
+            CLI
+            ;CONFIGURO EL IMR
+            MOV AL, 0FAH
+            OUT IMR, AL
+            MOV AL, N_F10
+            OUT INTO, AL
+            MOV AL, N_HAND
+            OUT INT2, AL
+            CALL ON_OF_HND
+            STI
+LAZO:       CMP FIN, 1
+            JNZ LAZO
+            CALL ON_OF_HND
+            INT 0    
+END

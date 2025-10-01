@@ -1,0 +1,98 @@
+PA    EQU 30H
+PB    EQU 31H
+CA    EQU 32H
+CB    EQU 33H
+
+EOI   EQU 20H
+IMR   EQU 21H
+INT0  EQU 24H
+N_F10 EQU 15
+
+            ORG 60
+            DW RUT_F10
+
+
+            ORG 1000H
+TERMINO     DB 0
+MSJ         DB "INGRESE CARCATERES POR TECLADO:",0AH
+FN          DB ?
+
+            ORG 1500H
+CAR         DB ?
+
+            ORG 3000H
+CONFIG_PIO:
+            MOV AL, 0FDH
+            OUT CA, AL
+            MOV AL, 0
+            OUT CB, AL
+            RET
+
+            ORG 3100H
+POLL:       
+            IN AL, PA
+            AND AL, 1
+            JNZ POLL
+            RET
+
+            ORG 3200H
+STROBE_0:   
+            IN AL, PA
+            AND AL, 0FDH
+            OUT PA, AL
+            RET
+
+            ORG 3300H
+STROBE_1:   
+            IN AL, PA
+            OR AL, 2
+            OUT PA, AL
+            RET
+
+            ORG 3400H
+IMP_CAR:    
+            CALL POLL
+            MOV AL, [BX]
+            OUT PB, AL
+            CALL STROBE_0
+            CALL STROBE_1
+            RET
+
+            ORG 3500H
+RUT_F10:    
+            PUSH AX
+            PUSH BX
+            MOV BX, OFFSET CAR
+SEGUIR:     CALL IMP_CAR
+            INC BX
+            DEC CL
+            JNZ SEGUIR
+            MOV AL, 0FFH
+            OUT IMR, AL
+            MOV TERMINO, 1
+            MOV AL, EOI
+            OUT EOI, AL
+            POP AX
+            IRET
+
+
+            ORG 2000H
+            CALL CONFIG_PIO
+            CLI
+            MOV AL, 0FEH
+            OUT IMR, AL
+            MOV AL, N_F10
+            OUT INT0, AL            
+            STI
+            MOV BX, OFFSET MSJ
+            MOV AL, OFFSET FN - OFFSET MSJ
+            INT 7
+            MOV AL, 1
+            MOV BX, OFFSET CAR
+LOOP:       CMP TERMINO, 1
+            INT 6
+            INC BX
+            INC CL
+            JMP LOOP
+
+END
