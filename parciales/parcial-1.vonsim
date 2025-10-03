@@ -1,0 +1,141 @@
+                org 1000h
+vector          dw 50,15,25,13,4,6,4,3,10
+fn              dw ?
+msj             db "ganan los pares"
+msj2            db "ganan los impares"
+fn2             db ?
+pares           dw 0
+
+
+                org 3000h
+es_par:         
+                push ax
+                and ax, 1
+                jz par
+                mov CX, 0
+                jmp fx 
+par:            mov CX, 1
+fx:             pop ax
+                ret
+
+                org 3100h 
+contar_pares:  
+                
+                mov bx, sp
+                add bx, 2
+                mov dx, [bx]  ;muevo a dx la longitud del vector
+                add bx, 2
+                mov bx, [bx] ;llevarme la direccion de memoria del vector
+seguir:         mov ax, [bx]      
+                call es_par
+                add pares, cx
+                add bx, 2
+                sub dx, 2
+                jnz seguir
+                mov ax, pares
+                ret
+
+                org 2000h
+                mov bx, offset vector
+                push bx
+                mov bx, offset fn - offset vector
+                push bx
+                call contar_pares
+                pop bx
+                mov dx, bx
+                sub dx, 9  ;cada valor del vector ocupa dos espacios, entonces para tener la longitud real, le quito la mitad al total
+                sub dx, ax ; totales - pares
+                sub dx, ax ; impares - pares
+                js ganaPar
+                mov bx, offset msj2
+                mov al, offset fn2 - offset msj2
+                int 7
+                jmp fin
+ganaPar:        mov bx, offset msj
+                mov al, offset msj2 - offset msj
+                int 7
+fin:            pop bx
+                int 0
+end
+
+;------------------------------------------------------------------------------------
+
+
+;constantes del pio
+PA  EQU 30H
+PB  EQU 31H
+CA  EQU 32H
+CB  EQU 33H
+;constantes del pic
+EOI  EQU 20H
+IMR  EQU 21H
+INT1  EQU 25H
+;constantes del timer
+CONT  EQU 10H
+COMP  EQU 11H
+IP_TIMER  EQU 15
+
+
+            ORG 1000H
+VECTOR_D    DB 10,5,7
+VECTOR_N    DB 60,30,80
+
+            ORG 60
+            DW RUT_TIMER
+
+
+            ORG 3000H
+RUT_TIMER:    
+            ;PASO LA NOTA
+            MOV AL, [BX]
+            OUT PA, AL
+            PUSH BX
+            ;PASO LA DURACION
+            MOV BX, CX
+            MOV AL, [BX]
+            OUT PB, AL
+            INC BX
+            MOV CX, BX          
+            POP BX
+            INC BX
+            DEC DL
+            JNZ FIN
+            ;MANDO SEÑAL PARA EJECUTAR
+            MOV AL, 0
+            OUT PB, AL
+            MOV AL, 0FFH
+            OUT IMR, AL
+FIN:        MOV AL, 0
+            OUT CONT, AL
+            MOV AL, EOI
+            OUT EOI, AL
+            IRET
+
+            ORG 3100H
+INI_PIO:      
+            MOV AL, 0
+            OUT CA, AL
+            OUT CB, AL              
+            RET
+
+            ORG 2000H
+            CALL INI_PIO
+            MOV BX, OFFSET VECTOR_D
+            MOV CX, BX
+            MOV BX, OFFSET VECTOR_N
+            MOV DL, OFFSET VECTOR_N - OFFSET VECTOR_D
+            CLI
+            MOV AL, 0FDH
+            OUT IMR, AL
+            MOV AL, IP_TIMER
+            OUT INT1, AL
+            MOV AL, 1
+            OUT COMP, AL
+            STI
+            MOV AL, 0
+            OUT CONT, AL
+
+LOOP:       CMP DL, 0
+            JNZ LOOP
+            INT 0
+END
