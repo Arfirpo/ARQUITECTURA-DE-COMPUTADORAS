@@ -1,0 +1,152 @@
+;Ejercicio 1
+                        ORG 1200H
+        NUM             DB 9,8,7,6,5,4,3,2,1
+
+                        
+                        ORG 3000H
+        RUT:            
+                        MOV BX, SP              ; BX = 7FFAH
+                        ADD BX, 4               ; BX = 7FFEH
+                        MOV BX, [BX]            ; BX = 1200H
+                        ADD BX, 6               ; BX = 1206H
+                        MOV AL, [BX]            ; AL = NUM 3
+                        SUB BX, 4               ; BX = 1202H
+                        MOV DL, [BX]            ; DL = NUM 7
+                        RET
+                        
+                        
+                        ORG 2000H
+                        MOV BX, OFFSET NUM      ;1200H (VALOR 9)
+                        PUSH BX                 ;SP --> 7FFEH      
+                        ADD BX, 2               ; DIRECCIÓN 1202H (VALOR 7)        
+                        PUSH BX                 ;SP --> 7FFCH
+                        CALL RUT                ;SP --> 7FFAH
+                        INT 0
+        END
+        ; AL = 3
+        ; DL = 7
+
+;------------------------------------------------------------------------------------------
+
+;Ejercicio 2
+
+
+        EOI             EQU 20H
+        IMR             EQU 21H
+        INT1            EQU 25H
+        CONT            EQU 10H
+        COMP            EQU 11H
+        ESPERA          EQU 15
+        CAR_FIN         EQU '9'
+
+                        ORG 48
+        RUT             DW CLK
+
+                        ORG 1000H
+        CAR             DB 30H                          ; <--- RESPUESTA
+        SEP             DB ";"
+        FLAG            DB 0
+
+                        ORG 4000H
+        FIN:            
+                        MOV FLAG, 1                     ; <--- RESPUESTA
+                        MOV AL, 0FFH
+                        OUT IMR, AL
+                        RET
+
+                        ORG 3000H
+        CLK:            
+                        MOV BX, OFFSET CAR
+                        MOV AL, 2
+                        INT 7
+                        CMP BYTE PTR [BX], CAR_FIN      ; <--- RESPUESTA
+                        JNZ SEG
+                        CALL FIN
+        SEG:            INC CAR
+                        MOV AL, 0
+                        OUT CONT, AL
+                        MOV AL, 20H
+                        OUT EOI, AL
+                        IRET
+
+                        ORG 2000H
+                        CLI
+                        MOV AL, 0FDH
+                        OUT IMR, AL
+                        MOV AL, 12
+                        OUT INT1, AL
+                        MOV AL, ESPERA
+                        OUT COMP, AL
+                        MOV AL, 0
+                        OUT CONT, AL
+                        STI                             ; <--- RESPUESTA
+        LOOP:           CMP FLAG, 1
+                        JNZ LOOP
+                        INT 0
+        END
+
+;------------------------------------------------------------------------------------------
+
+;Ejercicio 3
+
+                        ORG 1000H
+        VECTOR          DB ?
+
+
+                        ORG 3100H
+        ES_MINUS:
+                        CMP AL, 'z'
+                        JNS NO_ES
+                        CMP AL, 'a'
+                        JS NO_ES
+                        MOV AH, 0FFH
+                        JMP FN
+        NO_ES:          MOV AH, 0
+        FN:             RET
+
+                        ORG 3200H
+        LEER_MINUS:     
+                        INT 6
+                        MOV AL, [BX]
+                        CALL ES_MINUS
+                        CMP AH, 0FFH
+                        JNZ LEER_MINUS
+                        RET
+
+
+                        ORG 3300H
+
+        AMAYUS:        
+                        MOV AL, [BX]
+                        SUB AL, 20H
+                        MOV [BX], AL
+                        INC BX
+                        DEC CL
+                        CMP CL, 0
+                        JNZ AMAYUS
+                        RET
+
+                        ORG 3400H
+
+        LEER_STRING:    
+                        CALL LEER_MINUS
+                        INC BX
+                        DEC CL
+                        JNZ LEER_STRING
+        FIN:            RET
+
+
+                        ORG 2000H
+                        MOV BX, OFFSET VECTOR
+                        MOV CL, 20
+                        CALL LEER_STRING
+                        MOV BX, OFFSET VECTOR
+                        MOV CL, 20
+                        CALL AMAYUS
+                        INT 0
+
+        END
+
+;------------------------------------------------------------------------------------------
+
+;Ejercicio 4
