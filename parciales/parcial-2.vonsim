@@ -59,7 +59,7 @@
                         MOV BX, OFFSET CAR
                         MOV AL, 2
                         INT 7
-                        CMP BYTE PTR [BX], CAR_FIN      ; <--- RESPUESTA
+                        CMP BYTE PTR [BX], CAR_FIN      ; CMP CAR, CAR_FIN <--- RESPUESTA
                         JNZ SEG
                         CALL FIN
         SEG:            INC CAR
@@ -150,3 +150,72 @@
 ;------------------------------------------------------------------------------------------
 
 ;Ejercicio 4
+        EOI      EQU 20H
+        IMR      EQU  21H
+        INT2     EQU 26H
+        IP_HAND  EQU 15
+        ;HAND
+        DATA     EQU 40H
+        STATE    EQU 41H
+
+                  ORG 1000H
+        CANT_CAR  DB 10
+        FLAG      DB 0
+
+                  ORG 1500H
+        MSJ       DB ?
+
+                  ORG 60
+                  DW RUT_HAND
+
+                  ORG 3000H
+        CARGAR_MSJ:
+                    MOV BX, OFFSET MSJ
+                    MOV AL, 1
+        SEGUIR:     INT 6
+                    INC BX
+                    DEC AH
+                    JNZ SEGUIR
+                    RET
+
+                  ORG 3100H
+        RUT_HAND: 
+                  MOV AL, [BX]
+                  OUT DATA, AL
+                  INC BX
+                  DEC AH
+                  JNZ  FN
+                  MOV FLAG, 1
+                  MOV AL, 0FFH
+                  OUT IMR, AL
+                  IN AL, STATE  ; 10000000
+                  AND AL, 0EFH ; 01111111
+                  OUT STATE, AL
+        FN:       MOV AL, EOI
+                  OUT EOI, AL
+                  IRET
+
+                  ORG 2000H
+                  MOV AH, CANT_CAR      
+                  CALL CARGAR_MSJ
+                  CLI
+                  MOV AL, 80H ; 10000000
+                  OUT STATE, AL
+                  MOV AL, 0FBH ; 1111 1011
+                  OUT IMR, AL
+                  MOV AL, IP_HAND
+                  OUT INT2, AL
+                  MOV BX, OFFSET MSJ
+                  MOV AH, CANT_CAR 
+                  STI
+
+
+        LOOP:     CMP FLAG, 1
+                  JNZ LOOP
+                  INT 0
+        END
+
+          
+
+
+          
