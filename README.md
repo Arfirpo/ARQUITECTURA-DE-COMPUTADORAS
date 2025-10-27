@@ -15,5 +15,5 @@
 
 #### Parciales
 
-- [VonSim]()
+- [VonSim](https://github.com/Arfirpo/Arquitectura-de-Computadoras/tree/main/parciales/VonSim)
 - [WinMips]()
