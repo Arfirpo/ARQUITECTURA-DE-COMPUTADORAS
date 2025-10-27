@@ -9,7 +9,7 @@
 
 #### Practicas con WinMips
 
-- [Practica 4 - MIPS. Pila, Subrutina y Convención](https://github.com/Arfirpo/Arquitectura-de-Computadoras/tree/main/WinMips-Practicas-4-a-6/Practica-4)
+- [Practica 4 - MIPS, Pila, Subrutina y Convención](https://github.com/Arfirpo/Arquitectura-de-Computadoras/tree/main/WinMips-Practicas-4-a-6/Practica-4)
 - [Practica 5 - Pila y Subrutinas](https://github.com/Arfirpo/Arquitectura-de-Computadoras/tree/main/WinMips-Practicas-4-a-6/Practica-5)
 - [Practica 6 - Cauces y Atascos](https://github.com/Arfirpo/Arquitectura-de-Computadoras/tree/main/WinMips-Practicas-4-a-6/Practica-6)
 
